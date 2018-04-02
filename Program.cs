@@ -1,5 +1,6 @@
 ﻿using System;
 using Oracle.ManagedDataAccess.Client;
+using Dapper;
 
 namespace OracleCore
 {
@@ -16,16 +17,23 @@ namespace OracleCore
 
                 Console.WriteLine("Connected!");
 
+                const string sql = "SELECT 1+2 FROM DUAL";
+
+                // Using ADO
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT 1+2 FROM DUAL";
+                    cmd.CommandText = sql;
 
                     Console.WriteLine("Executing command:");
 
                     var result = cmd.ExecuteScalar();
 
-                    Console.WriteLine($"Result: {result}");
+                    Console.WriteLine($"Result via ADO: {result}");
                 }
+
+                // Using Dapper
+                var resultDapper = conn.QuerySingle<int>(sql);
+                Console.WriteLine($"Result via Dapper: {resultDapper}");
             }
 
             Console.WriteLine("Done!");
